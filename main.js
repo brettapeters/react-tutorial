@@ -17,6 +17,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -30,7 +31,7 @@ class Board extends React.Component {
       for (let j = 0; j < 3; j += 1) {
         row.push(this.renderSquare(j + i * 3));
       }
-      board.push(<div className="board-row">{row}</div>);
+      board.push(<div key={i} className="board-row">{row}</div>);
     }
     return (
       <div>
@@ -46,7 +47,8 @@ class Game extends React.Component {
     super();
     this.state = {
       history: [{
-        squares: Array(9).fill(null)
+        squares: Array(9).fill(null),
+        lastMove: null
       }],
       xIsNext: true,
       stepNumber: 0,
@@ -62,7 +64,10 @@ class Game extends React.Component {
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
-      history: history.concat([{ squares }]),
+      history: history.concat([{
+        squares,
+        lastMove: i
+      }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length,
     });
@@ -79,19 +84,21 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    const moves = history.map((step, move) => {
-      const desc = move ?
-        'Move #' + move :
+    const moves = history.map((step, n) => {
+      const posY = Math.floor(step.lastMove / 3 + 1);
+      const posX = step.lastMove % 3 + 1;
+      const desc = n ?
+        ((n % 2 ? 'X' : 'O') + ' at (' + posX + ', ' + posY + ')') :
         'Game start';
       const style = {
-        fontWeight: this.state.stepNumber === move ? 'bold' : ''
+        fontWeight: this.state.stepNumber === n ? 'bold' : ''
       };
       return (
-        <li key={move}>
+        <li key={n}>
           <a
             href="#"
             style={style}
-            onClick={() => this.jumpTo(move)}
+            onClick={() => this.jumpTo(n)}
           >
             {desc}
           </a>
