@@ -3,9 +3,14 @@ import ReactDOM from 'react-dom';
 import style from './style.css';
 
 function Square(props) {
+  const winColor = 'lightgreen';
+  const style = {
+    backgroundColor: props.win ? winColor : ''
+  };
+
   return (
     <button
-      style={{ backgroundColor: props.bgColor }}
+      style={style}
       className="square"
       onClick={() => props.onClick()}
     >
@@ -16,13 +21,12 @@ function Square(props) {
 
 class Board extends React.Component {
   renderSquare(i) {
-    const bgColor = this.props.winMoves &&
-                  this.props.winMoves.indexOf(i) !== -1 ?
-                  'lightgreen' : '';
+    const win = this.props.winMoves &&
+                this.props.winMoves.indexOf(i) !== -1;
     return (
       <Square
         key={i}
-        bgColor={bgColor}
+        win={win}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
