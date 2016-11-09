@@ -48,7 +48,10 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
-        lastMove: null
+        lastMove: {
+          x: null,
+          y: null
+        },
       }],
       xIsNext: true,
       stepNumber: 0,
@@ -66,7 +69,10 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares,
-        lastMove: i
+        lastMove: {
+          x: i % 3 + 1,
+          y: Math.floor(i / 3 + 1)
+        },
       }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length,
@@ -85,10 +91,9 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, n) => {
-      const posY = Math.floor(step.lastMove / 3 + 1);
-      const posX = step.lastMove % 3 + 1;
       const desc = n ?
-        ((n % 2 ? 'X' : 'O') + ' at (' + posX + ', ' + posY + ')') :
+        ((n % 2 ? 'X' : 'O') + ' at (' +
+         step.lastMove.x + ', ' + step.lastMove.y + ')') :
         'Game start';
       const style = {
         fontWeight: this.state.stepNumber === n ? 'bold' : ''
